@@ -1,0 +1,85 @@
+---
+# tasks file for Install_Redis
+
+- name: prepare install redis
+  apt: name={{ item }} state=latest
+  loop:
+    - build-essential
+    - tcl
+  become: yes
+
+- name: download redis
+  get_url:
+    url: http://download.redis.io/redis-stable.tar.gz
+    dest: /tmp/redis-stable.tar.gz  
+
+- name: Extract redis-stable.tar.gz into /tmp/redis-stable
+  unarchive:
+    src: /tmp/redis-stable.tar.gz
+    dest: /tmp/
+    remote_src: yes
+
+
+- name: build and install Redis
+  make:
+    chdir: /tmp/redis-stable
+    target: install
+  become: yes
+
+- name: mkdir /etc/redis/
+  file:
+    path: /etc/redis/
+    state: directory
+  become: yes
+    
+- name: copy redis.conf
+  copy:
+    src: redis.conf
+    dest: /etc/redis/redis.conf
+  become: yes
+
+
+- name: copy redis.service
+  copy:
+    src: redis.service
+    dest: /etc/systemd/system/redis.service
+  become: yes
+
+
+- name: create the redis user and group
+  shell: adduser --system --group --no-create-home redis
+  become: yes
+
+- name: mkdir /var/lib/redis
+  file:
+    path: /var/lib/redis
+    state: directory
+  become: yes
+
+- name: change permission /var/lib/redis
+  file:
+    path: /var/lib/redis
+    owner: redis
+    group: redis
+    mode: 0770
+  become: yes
+
+- name: start redis.service
+  shell: systemctl start redis
+  become: yes
+
+- name: enable redis to srtart at boot
+  shell: systemctl enable redis
+  become: yes
+
+- name: remove /tmp/redis-stable
+  file:
+    path: /tmp/redis-stable
+    state: absent
+  become: yes
+
+- name: remove /tmp/redis-stable.tar.gz
+  file:
+    path: /tmp/redis-stable.tar.gz
+    state: absent
+  become: yes

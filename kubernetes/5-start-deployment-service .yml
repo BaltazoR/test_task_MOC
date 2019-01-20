@@ -1,0 +1,14 @@
+---
+
+- name: start deployment + service  
+  hosts: master
+  gather_facts: false
+  #become: yes
+  
+  tasks:
+
+  - name: start deployment
+    shell: kubectl create -f deploy.yml
+
+  - name: start service
+    shell: kubectl create -f service.yml

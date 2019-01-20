@@ -1,0 +1,26 @@
+---
+
+- name: Create 'kub' user
+  hosts: all
+  become: yes
+  
+
+  tasks:
+  - name: create the 'kub' user
+    user: 
+      name: kub
+      append: yes
+      state: present
+      createhome: yes
+      shell: /bin/bash
+
+  - name: allow 'kub' to have passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      line: 'kub ALL=(ALL) NOPASSWD: ALL'
+      validate: 'visudo -cf %s'
+
+  - name: setup authorized keys for the 'kub' user
+    authorized_key: user=kub key="{{item}}"
+    with_file:
+      - ~/.ssh/id_rsa.pub

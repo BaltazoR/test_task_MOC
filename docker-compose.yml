@@ -1,0 +1,38 @@
+version: '3.1'
+
+services:
+
+# base
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: superSecret123
+    volumes:
+      - ./databases:/var/lib/postgresql/data
+    
+  # adminer:
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+
+# backend      
+  backend:
+    build: ./testapp
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      RAILS_ENV: development
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: superSecret123
+      SECRET_KEY_BASE: superSecret321
+      
+#frontend
+  frontend:
+    build: ./testContainerAngular
+    restart: always
+    ports:
+      - 80:80

@@ -1,0 +1,8 @@
+---
+# tasks file for copy_test_task
+
+- name: copy test_task from github
+  git:
+    repo: https://github.com/BaltazoR/test_task.git
+    dest: /{{ ansible_env.PWD }}/test_task
+    force: yes

@@ -1,0 +1,14 @@
+---
+
+- name: copy kubernetes configs on master node  
+  hosts: master
+  
+  tasks:
+
+  - name: copy deploy.yml + service.yml
+    copy:
+      src: "{{ playbook_dir  }}/kube_yml/{{ item }}/"
+      dest: "{{ ansible_env.PWD }}/{{ item }}"
+    loop:
+      - deploy.yml
+      - service.yml

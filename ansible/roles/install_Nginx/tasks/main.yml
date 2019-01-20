@@ -1,0 +1,6 @@
+---
+# tasks file for install_Nginx
+
+- name: install nginx web server
+  apt: name=nginx state=latest update_cache=true
+  become: yes

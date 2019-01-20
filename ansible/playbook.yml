@@ -1,0 +1,14 @@
+---
+
+- name: Create ansible recipe for ubuntu 16.04
+  hosts: Staging
+
+  roles:
+    - ping
+    - create_swap
+    - install_Nginx
+    - install_postgresql
+    - install_Redis
+    - install_docker-compose
+    - copy_test_task
+    - run_docker-compose

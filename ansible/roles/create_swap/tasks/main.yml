@@ -1,0 +1,39 @@
+---
+# tasks file for create_swap
+
+- name: check if exist swap
+  shell: swapon --show
+  register: results
+
+- block:
+  
+  - name: create swap file
+    shell: fallocate -l 2G /swapfile
+    become: yes
+
+  - name: change permission on file
+    file:
+      path: /swapfile
+      mode: 0600
+    become: yes
+  
+  - name: setup swap area
+    shell: mkswap /swapfile
+    become: yes
+  
+  - name: enable the swap file
+    shell: swapon /swapfile
+    become: yes
+
+  - name: backup fstab
+    shell: cp /etc/fstab /etc/fstab.bak
+    become: yes
+
+  - name: make the Swap File Permanent
+    lineinfile:
+      dest: /etc/fstab
+      regexp: "swapfile"
+      line: "/swapfile none swap sw 0 0"
+    become: yes
+
+  when: results.stdout == ""

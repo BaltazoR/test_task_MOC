@@ -1,0 +1,7 @@
+[Staging]
+16.04_ubuntu ansible_host=13.59.154.206
+
+[Staging:vars]
+ansible_user=ubuntu
+ansible_ssh_private_key_file=/home/ya/.ssh/aws_first.pem
+ansible_python_interpreter=/usr/bin/python3

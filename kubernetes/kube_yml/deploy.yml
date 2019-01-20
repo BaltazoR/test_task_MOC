@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-task
+  labels:
+    app: test-task
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: test-task
+  template:
+    metadata:
+      labels:
+        app: test-task
+    spec:
+      containers:
+      - name: frontend
+        image: iambaltazor/test_task_frontend
+        ports:
+        - containerPort: 80
+      - name: backend
+        image: iambaltazor/test_task_backend
+        ports:
+        - containerPort: 3000

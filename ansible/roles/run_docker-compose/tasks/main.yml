@@ -1,0 +1,16 @@
+---
+# tasks file for run_docker-compose
+
+# perhaps misunderstood the task, but the external nginx and Docker's nginx
+# were in conflict, so the external one turned off
+
+- name: stop external nginx
+  service:
+    name: nginx
+    state: stopped
+  become: yes
+
+- name: run docker-compose.yml
+  docker_service:
+    project_src: "{{ ansible_env.PWD }}/test_task/"
+  become: yes

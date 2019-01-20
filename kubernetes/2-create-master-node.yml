@@ -1,0 +1,35 @@
+---
+
+- name: Create master node  
+  hosts: master
+  become: yes
+  
+  tasks:
+
+  - name: initialize the cluster
+    shell: kubeadm init --pod-network-cidr=10.244.0.0/16 >> cluster.txt
+    args:
+      chdir: "{{ ansible_env.PWD }}"
+      creates: cluster.txt
+  
+  - name: create .kube directory
+    file:
+      path: "{{ ansible_env.PWD }}/.kube"
+      state: directory
+      mode: 0755
+ 
+  - name: copy admin.conf to user's kube config
+    copy:
+      src: /etc/kubernetes/admin.conf
+      dest: "{{ ansible_env.PWD }}/.kube/config"
+      remote_src: yes
+      group: kub
+      owner: kub
+
+ 
+  - name: install Pod network
+    become: no
+    shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> network.txt
+    args:
+      chdir: "{{ ansible_env.PWD }}"
+      creates: network.txt

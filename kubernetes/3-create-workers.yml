@@ -1,0 +1,24 @@
+---
+
+- name: Create workers nodes
+  hosts: master
+  become: yes
+  
+  tasks:
+
+  - name: get join token
+    shell: kubeadm token create --print-join-command
+    register: join_token
+  
+  - name: set fact join command
+    set_fact:
+      join_command: "{{ join_token.stdout_lines[0] }}"
+
+  
+- hosts: workers
+  become: yes
+  
+  tasks:
+   
+  - name: join cluster
+    shell: "{{ hostvars['master'].join_command }}"
